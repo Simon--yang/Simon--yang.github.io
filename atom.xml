@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Simon&#39;s小站</title>
+  <subtitle>自由国度</subtitle>
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="http://www.juiccy.cn/"/>
+  <updated>2016-12-08T09:29:18.000Z</updated>
+  <id>http://www.juiccy.cn/</id>
+  
+  <author>
+    <name>Simon yang</name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>【转】深入HTTPS系列一 （HTTP &amp; HTTPS）</title>
+    <link href="http://www.juiccy.cn/2016/12/08/%E3%80%90%E8%BD%AC%E3%80%91%E6%B7%B1%E5%85%A5HTTPS%E7%B3%BB%E5%88%97%E4%B8%80/"/>
+    <id>http://www.juiccy.cn/2016/12/08/【转】深入HTTPS系列一/</id>
+    <published>2016-12-08T02:33:25.000Z</published>
+    <updated>2016-12-08T09:29:18.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>原文链接：<a href="http://www.jianshu.com/p/a677fecec927" target="_blank" rel="external">http://www.jianshu.com/p/a677fecec927</a></p>
+<p>由于IOS即将强制使用HTTPS，所以最近花时间再次深入研究了一下HTTPS。<br>该篇主要先讲一些HTTPS术语。</p>
+<h2 id="HTTP是什么"><a href="#HTTP是什么" class="headerlink" title="HTTP是什么"></a>HTTP是什么</h2><p>首先，HTTP 是一个网络应用层协议，是专门用来帮你传输 Web 内容。</p>
+<h2 id="HTTP-和-TCP-之间的关系"><a href="#HTTP-和-TCP-之间的关系" class="headerlink" title="HTTP 和 TCP 之间的关系"></a>HTTP 和 TCP 之间的关系</h2><p>在网络分层模型中，TCP 被称为“传输层协议”，而 HTTP 被称为“应用层协议”。</p>
+<p>传输层主要有两个协议，分别是 TCP 和 UDP。TCP 比 UDP 更可靠。你可以把 TCP 协议想象成某个水管，发送端这头进水，接收端那头就出水。并且 TCP 协议能够确保，先发送的数据先到达（UDP 不保证这点）。</p>
+<p>简单地说，HTTP 协议需要依靠 TCP 协议来传输数据。</p>
+<h2 id="HTTP-协议如何使用-TCP-连接？"><a href="#HTTP-协议如何使用-TCP-连接？" class="headerlink" title="HTTP 协议如何使用 TCP 连接？"></a>HTTP 协议如何使用 TCP 连接？</h2><p>HTTP 对 TCP 连接的使用，分为两种方式：俗称“短连接”和“长连接”。</p>
+<p>在“短连接”的模式下，浏览器会先发起一个 TCP 连接，拿到该网页的 HTML 源代码（拿到 HTML 之后，这个 TCP 连接就关闭了）。然后，浏览器开始分析这个网页的源码，知道这个页面包含很多外部资源（图片、CSS、JS）。然后针对【每一个】外部资源，再分别发起一个个 TCP 连接，把这些文件获取到本地（同样的，每抓取一个外部资源后，相应的 TCP 就断开）</p>
+<p>如果是“长连接”的方式，浏览器也会先发起一个 TCP 连接去抓取页面。但是抓取页面之后，该 TCP 连接并不会立即关闭，而是暂时先保持着（所谓的“Keep-Alive”）。然后浏览器分析 HTML 源码之后，发现有很多外部资源，就用刚才那个 TCP 连接去抓取此页面的外部资源。</p>
+<p>在 HTTP 1.0 版本，【默认】使用的是“短连接”（那时候是 Web 诞生初期，网页相对简单，“短连接”的问题不大）；<br>到了1995年底开始制定 HTTP 1.1 草案的时候，网页已经开始变得复杂（网页内的图片、脚本越来越多了）。这时候再用短连接的方式，效率太低下了。所以，在 HTTP 1.1 中，【默认】采用的是“Keep-Alive”的方式。</p>
+<h2 id="“SSL-TLS”又是什么？"><a href="#“SSL-TLS”又是什么？" class="headerlink" title="“SSL/TLS”又是什么？"></a>“SSL/TLS”又是什么？</h2><p>SSL（Secure Sockets Layer），中文叫做“安全套接层”。它是在上世纪90年代中期，由网景公司设计的。<br>为啥要发明 SSL 这个协议捏？因为原先互联网上使用的 HTTP 协议是明文的，存在很多缺点——比如传输内容会被偷窥（嗅探）和篡改。发明 SSL 协议，就是为了解决这些问题。<br>后来SSL 因应用广泛，便被标准化。且名称改为 TLS（Transport Layer Security），中文叫做“传输层安全协议”。<br>很多相关的文章都把这两者并列称呼（SSL/TLS），因为这两者可以视作同一个东西的不同阶段。</p>
+<h2 id="“HTTPS”是啥意思？"><a href="#“HTTPS”是啥意思？" class="headerlink" title="“HTTPS”是啥意思？"></a>“HTTPS”是啥意思？</h2><p>解释完 HTTP 和 SSL/TLS，现在就可以来解释 HTTPS 啦。咱们通常所说的 HTTPS 协议，说白了就是“HTTP 协议”和“SSL/TLS 协议”的组合。</p>
+<p>你可以把 HTTPS 大致理解为——“HTTP over SSL/TLS”<br>Https的作用：<br><strong>身份认证</strong> 认证用户和服务器，确保数据发送到正确的客户机和服务器；（通道端可靠）<br><strong>内容加密</strong> 建立一个信息安全通道，来保证数据不被窃听；（通道加密）<br><strong>数据完整性</strong> 防止内容被第三方篡改；（避免通道劫持）</p>
+<h2 id="HTTPS和HTTP的区别"><a href="#HTTPS和HTTP的区别" class="headerlink" title="HTTPS和HTTP的区别"></a>HTTPS和HTTP的区别</h2><ol>
+<li>HTTPS协议需要到ca申请证书，一般免费证书较少，因而需要一定费用。  </li>
+<li>HTTP是超文本传输协议，信息是明文传输，HTTPS则是具有安全性的SSL加密传输协议。  </li>
+<li>HTTP和HTTPS使用的是完全不同的连接方式，用的端口也不一样，前者使用的端口是80，后者使用的端口是443。  </li>
+<li>HTTPS的连接很简单，是无状态的；HTTPS协议是由SSL+HTTP协议构建的可进行加密传输、身份认证的网络协议，比HTTPS协议安全。</li>
+</ol>
+<p>此文到此结束！<br>请继续关注下文，<a href="">深入HTTPS系列二（加密&amp;证书）</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;原文链接：&lt;a href=&quot;http://www.jianshu.com/p/a677fecec927&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;http://www.jianshu.com/p/a677fecec927&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;由于IO
+    
+    </summary>
+    
+    
+      <category term="HTTPS" scheme="http://www.juiccy.cn/tags/HTTPS/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Hello World</title>
+    <link href="http://www.juiccy.cn/2016/12/06/hello-world/"/>
+    <id>http://www.juiccy.cn/2016/12/06/hello-world/</id>
+    <published>2016-12-06T06:26:12.000Z</published>
+    <updated>2016-12-06T06:26:12.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>Welcome to <a href="https://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo new <span class="string">"My New Post"</span></div></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo server</div></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo generate</div></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo deploy</div></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;Welcome to &lt;a href=&quot;https://hexo.io/&quot; target=&quot;_blank&quot; rel=&quot;external&quot;&gt;Hexo&lt;/a&gt;! This is your very first post. Check &lt;a href=&quot;https://hexo.
+    
+    </summary>
+    
+    
+  </entry>
+  
+</feed>
